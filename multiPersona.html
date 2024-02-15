@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>multiPersona</title>
+<style>
+/* Cyberfuturistic CSS styling */
+:root {
+    --main-font: 'Roboto', sans-serif;
+    --background-color: #0f0f0f;
+    --text-color: #ffffff;
+    --container-background: #1f1f1f;
+    --border-color: #00ff00; /* Neon green */
+    --button-background: #00ff00; /* Neon green */
+    --button-text-color: #000000; /* Black text */
+    --hover-color: #00cc00; /* Darker neon green on hover */
+    --select-hover-color: #2a2a2a;
+    /* --select-hover-font-color: #000000; */
+}
+
+body {
+    font-family: var(--main-font);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--container-background);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+label {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--border-color);
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-size: 16px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Define Choose JSON File button */
+input[type="file"] {
+    display: none; /* Hide the default file input */
+}
+
+.input-file,
+button {
+    padding: 10px 20px;
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.input-file:hover,
+button:hover {
+    background-color: var(--hover-color);
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 16px;
+    cursor: pointer;
+    width: 500px;
+}
+
+/* Style for arrow (remove if unwanted) */
+select::-ms-expand {
+    display: none; /* Hide the default arrow in IE */
+    /* font: var(--select-hover-font-color); */
+}
+
+/* Optional: Add an arrow on hover */
+select:hover {
+  background-color: var(--select-hover-color); /* Use the variable for hover color */
+  /* font: var(--select-hover-font-color); */
+} 
+
+.expand-link,
+.collapse-link {
+    color: var(--border-color);
+    cursor: pointer;
+}
+
+.expand-link:hover,
+.collapse-link:hover {
+    text-decoration: underline;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Button for file selection -->
+    <label class="input-file"><input class="file-input-label" type="file" id="file-input">Select JSON file from PC.</label>
+
+    <!-- Buttons for loading JSON files -->
+    <button onclick="loadJSON()">Load selected JSON file.</button>
+    <hr>
+    
+    <!-- Input fields for role, goal, restrictions, programming language specifications, Instructions, and background story -->
+    <!-- <label for="role">Role:</label><br>
+    <textarea id="role" rows="4" cols="50"></textarea><br><br> -->
+
+    <label for="role">Role:</label><br>
+    <select id="role-dropdown" onchange="populateRoleTextField()">
+      <option value="">(Select role or describe manually.)</option> 
+      <option value="You are an excellent application programmer.">Application Programmer.</option>
+      <option value="You are an excellent application designer with lots of experience.">Software Product Manager</option>
+      <option value="You are a professional UX designer.">UX Designer</option>
+      <option value="You are a professinal photographer.">Photographer</option>
+      <!-- add options as necessary -->
+      </select>
+    <textarea id="role-text" rows="4" cols="50"></textarea><br><br>
+        
+
+
+    <label for="goal">Goal:</label><br>
+    <textarea id="goal" rows="4" cols="50"></textarea><br><br>
+
+    <label for="background-story">Background Story/Context (optional): </label><br>
+    <textarea id="background-story" rows="4" cols="50" placeholder="Imagine that you ..."></textarea>
+    <span class="expand-link" onclick="expandBackgroundStory()">expand</span> | 
+    <span class="collapse-link" onclick="collapseBackgroundStory()">collapse</span><br><br>
+
+    <label for="restrictions">Restrictions:</label><br>
+    <textarea id="restrictions" rows="4" cols="50"></textarea><br><br>
+
+    <label for="language-specifications">Programming Language Specifications:</label><br>
+    <select id="language-specifications" onchange="populateTextField()">
+      <option value="">(Select Language or Describe manually.)</option> 
+      <option value="html-css-js-combined">HTML, CSS, and JavaScript: All in one file</option>
+      <option value="html-css-js-separate">HTML, CSS, and JavaScript: Separated files</option>
+      <option value="python-standard">Python: Use only standard modules and libraries</option>
+      <option value="python-external">Python: Allowed to use external modules that require installation</option>
+      <option value="java">Java</option>
+      <option value="cobol">Cobol</option>
+      <option value="excel-macro">Excel Macro (VBA)</option>
+      <option value="powerpoint-macro">PowerPoint Macro (VBA)</option>
+      <!-- add options as necessary -->
+    </select>
+    <textarea id="language-specifications-text" rows="4" cols="50"></textarea><br><br> 
+    
+
+    <label for="Instructions">Instructions:</label><br>
+    <textarea id="Instructions" rows="10" cols="50" style="overflow-y: auto;" placeholder="- You MUST generate FULL code."></textarea><br> <!-- Add vertical scrollbar -->
+    <span class="expand-link" onclick="expandInstructions()">expand</span> | 
+    <span class="collapse-link" onclick="collapseInstructions()">collapse</span><br><br>
+
+    <!-- Input field for shot prompt-->
+    <label for="shot-prompt-text">Sample Data for 0-1/Few Shot Prompt (optional):</label><br>
+    <textarea id="shot-prompt-text" rows="4" cols="50"></textarea><br>
+    <span class="expand-link" onclick="expandShotPromptText()">expand</span> | 
+    <span class="collapse-link" onclick="collapseShotPromptText()">collapse</span><br><br>
+
+    <!-- Input field for Output Format Specifications (Optional) -->
+    <label for="output-format">Output Format Specifications (Optional):</label><br>
+    <textarea id="output-format" rows="4" cols="50" placeholder="Here's sample data:"></textarea><br>
+    <span class="expand-link" onclick="expandOutputFormat()">expand</span> | 
+    <span class="collapse-link" onclick="collapseOutputFormat()">collapse</span><br><br>
+
+    <!-- Input field for free text -->
+    <label for="free-text">Free Text (Optional):</label><br>
+    <textarea id="free-text" rows="4" cols="50"></textarea><br>
+    <span class="expand-link" onclick="expandFreeText()">expand</span> | 
+    <span class="collapse-link" onclick="collapseFreeText()">collapse</span><br><br>
+    
+    <!-- Input field for controlling prompt -->
+    <label for="controlling-prompt">Controlling Prompt (optional):</label><br>
+    <textarea id="controlling-prompt" rows="4" cols="50" placeholder="Start with asking questions for whatever you need to know."></textarea>
+
+    <hr>
+    <!-- Buttons for saving JSON files -->
+    <button onclick="saveJSON()">Save as JSON File. (data.json)</button>
+
+    <!-- Button to send titles and text fields to clipboard -->
+    <button onclick="copyToClipboard()">Copy All Prompts</button>
+    <button onclick="copyRoleAndRestrictionsToClipboard()">Copy only Role&Restrictions</button>
+
+</div>
+
+<script>
+// JavaScript code for loading and saving JSON files
+function loadJSON() {
+  // Reset all fields 
+  resetFormFields();
+
+  const fileInput = document.getElementById('file-input');
+  const file = fileInput.files[0];
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const jsonContent = event.target.result;
+    const data = JSON.parse(jsonContent);
+    // document.getElementById('role').value = data.role || '';
+    // Load role
+   const roleSelection = data.role || '';
+   document.getElementById('role-dropdown').value = roleSelection;
+   document.getElementById('role-text').value = roleSelection ? "" + roleSelection : '';
+
+    document.getElementById('goal').value = data.goal || '';
+    document.getElementById('background-story').value = data.backgroundStory || '';
+    document.getElementById('restrictions').value = data.restrictions || '';
+
+    // Load programming language specifications
+    const specSelection = data.languageSpecifications || '';
+    document.getElementById('language-specifications').value = specSelection;
+    document.getElementById('language-specifications-text').value = specSelection ? "" + specSelection : '';
+
+
+    document.getElementById('Instructions').value = data.Instructions || '';
+    document.getElementById('shot-prompt-text').value = data.shotPromptText || '';
+    document.getElementById('output-format').value = data.outputFormat || '';
+    document.getElementById('free-text').value = data.freeText || '';
+    document.getElementById('controlling-prompt').value = data.controllingPrompt || '';
+    
+
+  };
+  reader.readAsText(file);
+}
+
+function resetFormFields() {
+  // Reset text areas
+ 
+  document.getElementById('role-text').value = '';
+  document.getElementById('goal').value = '';
+
+  document.getElementById('role-dropdown').selectedIndex = 0; 
+  document.getElementById('language-specifications').selectedIndex = 0; 
+
+}
+
+// JavaScript code for saving JSON files
+function saveJSON() {
+  
+  const data = {
+    role: document.getElementById('role-text').value.trim(),
+    goal: document.getElementById('goal').value.trim(),
+    backgroundStory: document.getElementById('background-story').value.trim(),
+    restrictions: document.getElementById('restrictions').value.trim(),
+    languageSpecifications: document.getElementById('language-specifications-text').value.trim(),
+    Instructions: document.getElementById('Instructions').value.trim(),
+    shotPromptText: document.getElementById('shot-prompt-text').value.trim(), // New field
+    outputFormat: document.getElementById('output-format').value.trim(), // New field
+    freeText: document.getElementById('free-text').value.trim(), // New field
+    controllingPrompt: document.getElementById('controlling-prompt').value.trim(), // New field
+  };
+  
+  // Remove empty fields from data
+  for (let key in data) {
+    if (data[key] === '') {
+      delete data[key];
+    }
+  }
+
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+// JavaScript code to copy titles and text fields to clipboard
+function copyToClipboard() {
+  const titlesAndText = [
+    `///Role:\n${document.getElementById('role-text').value}`,
+    `///Goal:\n${document.getElementById('goal').value}`,
+    `///Background Story:\n${document.getElementById('background-story').value}`,
+    `///Restrictions:\n${document.getElementById('restrictions').value}`,
+    `///Programming Language Specifications:\n${document.getElementById('language-specifications-text').value}`,
+    `///Instructions:\n${document.getElementById('Instructions').value}`,
+    `///Sample Data Format:\n${document.getElementById('shot-prompt-text').value}`, // New field
+    `///Output Format Specifications:\n${document.getElementById('output-format').value}`, // New field
+    `///Free Text:\n${document.getElementById('free-text').value}`, // New field
+    `///Controlling Prompt:\n${document.getElementById('controlling-prompt').value}`, // New field
+  ];
+
+  // Remove empty fields from titlesAndText
+  const filteredTitlesAndText = titlesAndText.filter(item => item.split('\n')[1].trim() !== '');
+
+  const textToCopy = filteredTitlesAndText.join('\n\n');
+  navigator.clipboard.writeText(textToCopy);
+}
+
+function copyRoleAndRestrictionsToClipboard() {
+  const roleText = document.getElementById('role-text').value;
+  const restrictionsText = document.getElementById('restrictions').value;
+
+  // Create the combined text 
+  const textToCopy = `///Role: \n${roleText}\n\n///Restrictions:\n${restrictionsText}`;
+
+   // Copy to clipboard
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => { 
+        // Optional: Notify success to the user
+        alert("Role and Restrictions copied to clipboard!");
+    })
+    .catch((err) => {
+        console.error('Error copying Role and Restrictions: ', err);
+    }); 
+}
+
+
+function populateRoleTextField() {
+  const dropdown = document.getElementById('role-dropdown');
+  const textField = document.getElementById('role-text');
+
+  if (dropdown.value) { 
+    textField.value = dropdown.value;
+  } else {
+    textField.value = ""; 
+  }
+}
+
+function populateTextField() {
+  const dropdown = document.getElementById('language-specifications');
+  const textField = document.getElementById('language-specifications-text');
+
+  // Check if a dropdown value is selected 
+  if (dropdown.value) { 
+    textField.value = dropdown.value;
+  } else {
+    textField.value = ""; 
+  }
+}
+
+
+// JavaScript code to expand the Background Story textarea
+function expandBackgroundStory() {
+  const backgroundStoryTextarea = document.getElementById('background-story');
+  backgroundStoryTextarea.rows = 10; // Change the number of rows as needed
+}
+
+// JavaScript code to collapse the Background Story textarea
+function collapseBackgroundStory() {
+  const backgroundStoryTextarea = document.getElementById('background-story');
+  backgroundStoryTextarea.rows = 4; // Change the number of rows as needed
+}
+
+// JavaScript code to expand the Instructions textarea
+function expandInstructions() {
+  const InstructionsTextarea = document.getElementById('Instructions');
+  InstructionsTextarea.rows = 20; // Change the number of rows as needed
+}
+
+// JavaScript code to collapse the Instructions textarea
+function collapseInstructions() {
+  const InstructionsTextarea = document.getElementById('Instructions');
+  InstructionsTextarea.rows = 10; // Change the number of rows as needed
+}
+
+// JavaScript code to expand the Instructions textarea
+function expandShotPromptText() {
+  const InstructionsTextarea = document.getElementById('shot-prompt-text');
+  InstructionsTextarea.rows = 20; // Change the number of rows as needed
+}
+
+// JavaScript code to collapse the Instructions textarea
+function collapseShotPromptText() {
+  const InstructionsTextarea = document.getElementById('shot-prompt-text');
+  InstructionsTextarea.rows = 10; // Change the number of rows as needed
+}
+
+// JavaScript code to expand the Instructions textarea
+function expandOutputFormat() {
+  const InstructionsTextarea = document.getElementById('output-format');
+  InstructionsTextarea.rows = 20; // Change the number of rows as needed
+}
+
+// JavaScript code to collapse the Instructions textarea
+function collapseOutputFormat() {
+  const InstructionsTextarea = document.getElementById('output-format');
+  InstructionsTextarea.rows = 10; // Change the number of rows as needed
+}
+
+// JavaScript code to expand the Instructions textarea
+function expandFreeText() {
+  const InstructionsTextarea = document.getElementById('free-text');
+  InstructionsTextarea.rows = 20; // Change the number of rows as needed
+}
+
+// JavaScript code to collapse the Instructions textarea
+function collapseFreeText() {
+  const InstructionsTextarea = document.getElementById('free-text');
+  InstructionsTextarea.rows = 10; // Change the number of rows as needed
+}
+</script>
+
+</body>
+</html>
