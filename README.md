@@ -9,3 +9,4 @@ How to use:
 Simply donwload the multiPersona.html on your PC.
 Launch and start writing your prompt.
 
+I have added two sample roll samples: 1) python-developer and 2) EnglishTeacher.
